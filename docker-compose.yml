@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-claude-sonnet-4-6}
+      - CURRENT_DATE=${CURRENT_DATE:-2026-06-15}
+      - ALLOWED_ORIGINS=http://localhost:3000
+    volumes:
+      - chroma_data:/app/chroma_db
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  chroma_data:
